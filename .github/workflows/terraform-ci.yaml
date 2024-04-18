@@ -1,0 +1,55 @@
+name: Terraform CI
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, converted_to_draft, ready_for_review, edited]
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+env:
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+jobs:
+  clean_comments:
+    name: clear terraform plan pr comments
+    runs-on: ubuntu-latest
+    steps:
+      - name: pr-deleter
+        uses: maheshrayas/action-pr-comment-delete@v3.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          org: brandlive1941
+          repo: ${{ github.repository }}
+          user: 'github-actions[bot]' #commented by the userid
+          issue: ${{ github.event.number }}
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    needs: clean_comments
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+
+    steps:
+      - name: check out code
+        uses: actions/checkout@v3
+
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v3
+        with: 
+            terraform_version: 1.7.0
+
+      - name: terraform fmt
+        id: lint
+        run: terraform fmt -check -diff -recursive .
+        shell: bash
+
+      - name: verify terraform lint
+        if: steps.lint.outcome == 'failure'
+        run: |
+            echo "Terraform lint failed, please run terraform fmt to fix the issues"
+            exit 1
+        shell: bash
