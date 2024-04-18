@@ -48,7 +48,7 @@ module "lb" {
   source                = "terraform-google-modules/lb-http/google//modules/serverless_negs"
   version               = "~> 10.0"
   project               = var.project_id
-  name                  = var.lb_name
+  name                  = "${var.name_prefix}-lb"
   load_balancing_scheme = "EXTERNAL_MANAGED"
   backends              = local.backends
   certificate_map       = var.certificate_map
@@ -80,7 +80,7 @@ resource "google_compute_target_https_proxy" "default" {
 # URL Map
 resource "google_compute_url_map" "urlmap" {
   project     = var.project_id
-  name        = var.lb_name
+  name        = "${var.name_prefix}-url-map"
   description = "URL map for Loadbalancer"
   default_url_redirect {
     https_redirect         = true
@@ -88,14 +88,14 @@ resource "google_compute_url_map" "urlmap" {
     strip_query            = false
   }
   dynamic "host_rule" {
-    for_each = var.services
+    for_each = merge(var.services, var.buckets)
     content {
       hosts        = host_rule.value.hosts
       path_matcher = host_rule.key
     }
   }
   dynamic "path_matcher" {
-    for_each = var.services
+    for_each = merge(var.services, var.buckets)
     content {
       name            = path_matcher.key
       default_service = module.lb.backend_services[path_matcher.key].id

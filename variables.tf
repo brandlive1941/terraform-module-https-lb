@@ -18,11 +18,6 @@ variable "static_ip_name" {
   description = "Name of the external-ip. the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])?"
 }
 
-variable "lb_name" {
-  type        = string
-  description = "Name used for lb"
-}
-
 variable "name_prefix" {
   type        = string
   description = "Prefix-name used for lb proxy and forwarding rule"
@@ -69,6 +64,17 @@ variable "buckets" {
     name         = string
     location     = string
     service_name = string
+    hosts        = list(string)
+    path_rules = map(object({
+      paths = list(string)
+      url_redirect = list(object({
+        host_redirect          = optional(string)
+        path_redirect          = optional(string)
+        https_redirect         = optional(bool, false)
+        redirect_response_code = optional(number, 301)
+        string_query           = optional(string)
+      }))
+    }))
     backend = optional(object({
       enable_cdn = optional(bool, false)
       cdn_policy = optional(object({
