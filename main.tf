@@ -80,7 +80,7 @@ resource "google_compute_target_https_proxy" "default" {
 # URL Map
 resource "google_compute_url_map" "urlmap" {
   project     = var.project_id
-  name        = "${var.name_prefix}-url-map"
+  name        = "${var.name_prefix}-lb"
   description = "URL map for Loadbalancer"
   default_url_redirect {
     https_redirect         = true
