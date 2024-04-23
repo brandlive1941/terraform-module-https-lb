@@ -15,7 +15,7 @@ locals {
   bucket_backend_paths = {
     for bucket in keys(var.buckets) : bucket => {
       name            = bucket
-      default_service = module.buckets[bucket].backend_service_id
+      default_service = module.buckets[bucket].id
     }
   }
   backend_paths = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
