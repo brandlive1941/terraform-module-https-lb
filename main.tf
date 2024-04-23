@@ -2,10 +2,17 @@ locals {
   cloud_run_backends = {
     for service in keys(var.services) : service => module.serverless_negs[service].backend
   }
-  bucket_backends = {
-    for bucket in keys(var.buckets) : bucket => module.buckets[bucket].backend
+  cloud_run_backend_paths = {
+    for service in keys(var.services) : service => {
+      id = module.lb.backend_services[service].id
+    }
   }
-  backends = merge(local.cloud_run_backends, local.bucket_backends)
+  bucket_backend_paths = {
+    for bucket in keys(var.buckets) : bucket => {
+      id = module.buckets[bucket].id
+    }
+  }
+  backend_paths = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
 }
 
 # Global IP
@@ -32,7 +39,7 @@ module "serverless_negs" {
 # Backend Bucket Services
 module "buckets" {
   for_each     = var.buckets
-  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.0.3"
+  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.0.4"
   project_id   = var.project_id
   name         = each.value["name"]
   location     = each.value["location"]
@@ -51,7 +58,7 @@ module "lb" {
   project               = var.project_id
   name                  = "${var.name_prefix}-lb"
   load_balancing_scheme = "EXTERNAL_MANAGED"
-  backends              = local.backends
+  backends              = local.cloud_run_backends
   certificate_map       = var.certificate_map
   depends_on = [
     module.serverless_negs,
@@ -99,12 +106,12 @@ resource "google_compute_url_map" "urlmap" {
     for_each = merge(var.services, var.buckets)
     content {
       name            = path_matcher.key
-      default_service = module.lb.backend_services[path_matcher.key].id
+      default_service = local.backend_paths[path_matcher.key].id
       dynamic "path_rule" {
         for_each = path_matcher.value.path_rules
         content {
           paths   = path_rule.value["paths"]
-          service = module.lb.backend_services[path_matcher.key].id
+          service = local.backend_paths[path_matcher.key].id
           dynamic "url_redirect" {
             for_each = path_rule.value.url_redirect
             content {
