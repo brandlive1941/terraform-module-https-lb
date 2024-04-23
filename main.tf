@@ -8,14 +8,12 @@ locals {
   # backends = merge(local.cloud_run_backends, local.bucket_backends)
   cloud_run_backend_paths = {
     for service in keys(var.services) : service => {
-      name            = service
-      default_service = module.lb.backend_services[service].id
+      id = module.lb.backend_services[service].id
     }
   }
   bucket_backend_paths = {
     for bucket in keys(var.buckets) : bucket => {
-      name            = bucket
-      default_service = module.buckets[bucket].id
+      id = module.buckets[bucket].id
     }
   }
   backend_paths = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
