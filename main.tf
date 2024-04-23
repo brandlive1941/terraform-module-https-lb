@@ -51,7 +51,7 @@ module "lb" {
   project               = var.project_id
   name                  = "${var.name_prefix}-lb"
   load_balancing_scheme = "EXTERNAL_MANAGED"
-  backends              = local.backends
+  backends              = local.cloud_run_backends
   certificate_map       = var.certificate_map
   depends_on = [
     module.serverless_negs,
