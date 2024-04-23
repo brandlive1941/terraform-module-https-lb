@@ -32,13 +32,14 @@ module "serverless_negs" {
 # Backend Bucket Services
 module "buckets" {
   for_each     = var.buckets
-  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.0.1"
+  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.0.2"
   project_id   = var.project_id
   name         = each.value["name"]
   location     = each.value["location"]
   service_name = each.value["service_name"]
   enable_cdn   = each.value.backend["enable_cdn"]
   cdn_policy   = each.value.backend["cdn_policy"]
+  cors_policy  = each.value.backend["cors_policy"]
   iap_config   = each.value.backend["iap_config"]
   log_config   = each.value.backend["log_config"]
 }
