@@ -2,10 +2,6 @@ locals {
   cloud_run_backends = {
     for service in keys(var.services) : service => module.serverless_negs[service].backend
   }
-  # bucket_backends = {
-  #   for bucket in keys(var.buckets) : bucket => module.buckets[bucket].backend
-  # }
-  # backends = merge(local.cloud_run_backends, local.bucket_backends)
   cloud_run_backend_paths = {
     for service in keys(var.services) : service => {
       id = module.lb.backend_services[service].id
@@ -43,7 +39,7 @@ module "serverless_negs" {
 # Backend Bucket Services
 module "buckets" {
   for_each     = var.buckets
-  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=cr_backend"
+  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.0.4"
   project_id   = var.project_id
   name         = each.value["name"]
   location     = each.value["location"]
