@@ -2,10 +2,23 @@ locals {
   cloud_run_backends = {
     for service in keys(var.services) : service => module.serverless_negs[service].backend
   }
-  bucket_backends = {
-    for bucket in keys(var.buckets) : bucket => module.buckets[bucket].backend
+  # bucket_backends = {
+  #   for bucket in keys(var.buckets) : bucket => module.buckets[bucket].backend
+  # }
+  # backends = merge(local.cloud_run_backends, local.bucket_backends)
+  cloud_run_backend_paths = {
+    for service in keys(var.services) : service => {
+      name            = service
+      default_service = module.lb.backend_services[service].id
+    }
   }
-  backends = merge(local.cloud_run_backends, local.bucket_backends)
+  bucket_backend_paths = {
+    for bucket in keys(var.buckets) : bucket => {
+      name            = bucket
+      default_service = module.buckets[bucket].backend_service_id
+    }
+  }
+  backend_paths = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
 }
 
 # Global IP
@@ -99,12 +112,12 @@ resource "google_compute_url_map" "urlmap" {
     for_each = merge(var.services, var.buckets)
     content {
       name            = path_matcher.key
-      default_service = module.lb.backend_services[path_matcher.key].id
+      default_service = local.backend_paths[path_matcher.key].id
       dynamic "path_rule" {
         for_each = path_matcher.value.path_rules
         content {
           paths   = path_rule.value["paths"]
-          service = module.lb.backend_services[path_matcher.key].id
+          service = local.backend_paths[path_matcher.key].id
           dynamic "url_redirect" {
             for_each = path_rule.value.url_redirect
             content {
