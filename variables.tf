@@ -89,6 +89,12 @@ variable "buckets" {
           ttl  = optional(number)
         }))
       }))
+      cors_policy = optional(object({
+        max_age_seconds = optional(number)
+        headers         = optional(list(string))
+        methods         = optional(list(string))
+        origins         = optional(list(string))
+      }))
       iap_config = optional(object({
         enable               = bool
         oauth2_client_id     = optional(string)
