@@ -114,7 +114,7 @@ variable "services" {
         path_redirect          = optional(string)
         https_redirect         = optional(bool, false)
         redirect_response_code = optional(number, 301)
-        string_query           = optional(string)
+        strip_query           = optional(string)
       }))
     }))
     cloud_run_regions = list(object({
