@@ -113,7 +113,7 @@ variable "services" {
         host_redirect          = optional(string)
         path_redirect          = optional(string)
         https_redirect         = optional(bool, false)
-        redirect_response_code = optional(number, 301)
+        redirect_response_code = optional(string)
         strip_query           = optional(string)
       }))
     }))
