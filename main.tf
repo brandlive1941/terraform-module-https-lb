@@ -115,11 +115,11 @@ resource "google_compute_url_map" "urlmap" {
           dynamic "url_redirect" {
             for_each = path_rule.value.url_redirect
             content {
-              host_redirect          = path_rule.value.host_redirect
-              https_redirect         = path_rule.value.https_redirect
-              path_redirect          = path_rule.value.path_redirect
-              redirect_response_code = path_rule.value.redirect_response_code
-              strip_query            = path_rule.value.strip_query
+              host_redirect          = url_redirect.value["host_redirect"]
+              https_redirect         = url_redirect.value["https_redirect"]
+              path_redirect          = url_redirect.value["path_redirect"]
+              redirect_response_code = url_redirect.value["redirect_response_code"]
+              strip_query            = url_redirect.value["strip_query"]
             }
           }
         }
