@@ -110,8 +110,13 @@ resource "google_compute_url_map" "urlmap" {
       dynamic "path_rule" {
         for_each = path_matcher.value.path_rules
         content {
-          paths   = path_rule.value["paths"]
-          service = try(local.backend_paths[path_matcher.key].id, null)
+          paths = path_rule.value["paths"]
+          dynamic "service" {
+            for_each = local.backend_paths[path_matcher.key].id
+            content {
+              service = service.value
+            }
+          }
           dynamic "url_redirect" {
             for_each = path_rule.value.url_redirect
             content {
