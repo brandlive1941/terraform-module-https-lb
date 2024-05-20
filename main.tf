@@ -112,7 +112,7 @@ resource "google_compute_url_map" "urlmap" {
         content {
           paths = path_rule.value["paths"]
           dynamic "service" {
-            for_each = local.backend_paths[path_matcher.key].id
+            for_each = [local.backend_paths[path_matcher.key].id]
             content {
               service = service.value
             }
