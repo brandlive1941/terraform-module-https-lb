@@ -117,10 +117,10 @@ variable "services" {
         strip_query           = optional(string)
       }))
     }))
-    cloud_run_regions = list(object({
+    cloud_run_regions = optional(list(object({
       region = string
       name   = string
-    }))
+    })))
     backend = optional(object({
       enable_cdn = optional(bool, false)
       iap_config = optional(object({
