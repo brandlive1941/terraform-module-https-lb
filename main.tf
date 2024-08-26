@@ -14,6 +14,7 @@ locals {
   }
   backend_paths      = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
   load_balancer_name = var.load_balancer_name == "" ? "${var.name_prefix}-lb" : var.load_balancer_name
+  url_map            = var.url_map == "" ? "" : var.url_map
 }
 
 # Global IP
@@ -60,6 +61,7 @@ module "lb" {
   name                  = local.load_balancer_name
   load_balancing_scheme = "EXTERNAL_MANAGED"
   backends              = local.cloud_run_backends
+  url_map               = var.url_map == "" ? null : var.url_map
   certificate_map       = var.certificate_map
   depends_on = [
     module.serverless_negs,
