@@ -29,12 +29,6 @@ variable create_address {
   description = "Set to false to skip the creation of the load balancer"
 }
 
-variable "load_balancer_name" {
-  type        = string
-  description = "Name of the load balancer"
-  default     = ""
-}
-
 variable "url_map" {
   type        = string
   description = "Name of the URL Map"
