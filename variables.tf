@@ -25,7 +25,7 @@ variable "name_prefix" {
 
 variable create_address {
   type        = bool
-  default     = false
+  default     = true
   description = "Set to false to skip the creation of the load balancer"
 }
 
