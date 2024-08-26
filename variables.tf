@@ -23,6 +23,12 @@ variable "name_prefix" {
   description = "Prefix-name used for lb proxy and forwarding rule"
 }
 
+variable "load_balancer_name" {
+  type        = string
+  description = "Name of the load balancer"
+  default     = ""
+}
+
 variable "custom_labels_https_fwd_rule" {
   type        = map(string)
   default     = {}

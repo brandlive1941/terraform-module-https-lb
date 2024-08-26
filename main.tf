@@ -13,6 +13,7 @@ locals {
     }
   }
   backend_paths = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
+  load_balancer_name = var.load_balancer_name == "" ? "${var.name_prefix}-lb" : var.load_balancer_name
 }
 
 # Global IP
@@ -56,7 +57,7 @@ module "lb" {
   source                = "terraform-google-modules/lb-http/google//modules/serverless_negs"
   version               = "~> 10.0"
   project               = var.project_id
-  name                  = "${var.name_prefix}-lb"
+  name                  = local.load_balancer_name
   load_balancing_scheme = "EXTERNAL_MANAGED"
   backends              = local.cloud_run_backends
   certificate_map       = var.certificate_map
