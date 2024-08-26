@@ -63,6 +63,7 @@ module "lb" {
   backends              = local.cloud_run_backends
   url_map               = var.url_map == "" ? null : var.url_map
   certificate_map       = var.certificate_map
+  create_address        = var.create_address
   depends_on = [
     module.serverless_negs,
     module.buckets
