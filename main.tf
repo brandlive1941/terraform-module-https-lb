@@ -56,7 +56,7 @@ module "buckets" {
 # Load Balancer
 module "lb" {
   source                = "terraform-google-modules/lb-http/google//modules/serverless_negs"
-  version               = "~> 11.1.0"
+  version               = "~> 11.0.0"
   project               = var.project_id
   name                  = local.load_balancer_name
   load_balancing_scheme = "EXTERNAL_MANAGED"
