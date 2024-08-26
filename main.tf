@@ -12,7 +12,7 @@ locals {
       id = module.buckets[bucket].id
     }
   }
-  backend_paths = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
+  backend_paths      = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
   load_balancer_name = var.load_balancer_name == "" ? "${var.name_prefix}-lb" : var.load_balancer_name
 }
 
