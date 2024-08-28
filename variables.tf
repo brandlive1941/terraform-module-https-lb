@@ -29,12 +29,6 @@ variable "create_address" {
   description = "Set to false to skip the creation of the load balancer"
 }
 
-variable "url_map" {
-  type        = string
-  description = "Name of the URL Map"
-  default     = ""
-}
-
 variable "custom_labels_https_fwd_rule" {
   type        = map(string)
   default     = {}
