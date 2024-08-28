@@ -12,8 +12,8 @@ locals {
       id = module.buckets[bucket].id
     }
   }
-  backend_paths      = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
-  url_map_name       = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name 
+  backend_paths = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
+  url_map_name  = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
 }
 
 # Global IP
