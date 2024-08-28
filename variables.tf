@@ -23,6 +23,12 @@ variable "name_prefix" {
   description = "Prefix-name used for lb proxy and forwarding rule"
 }
 
+variable "create_address" {
+  type        = bool
+  default     = true
+  description = "Set to false to skip the creation of the load balancer"
+}
+
 variable "create_load_balancer" {
   type        = bool
   default     = false
