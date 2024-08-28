@@ -35,9 +35,9 @@ variable "load_balancer_name" {
   default     = ""
 }
 
-variable "url_map" {
+variable "url_map_name" {
   type        = string
-  description = "Name of the URL Map"
+  description = "Optional name of the URL map to create"
   default     = ""
 }
 

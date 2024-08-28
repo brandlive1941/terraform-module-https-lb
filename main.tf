@@ -13,8 +13,7 @@ locals {
     }
   }
   backend_paths      = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
-  load_balancer_name = var.load_balancer_name == "" ? "${var.name_prefix}-lb" : var.load_balancer_name
-  url_map            = var.url_map == "" ? "" : var.url_map
+  url_map_name       = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name 
 }
 
 # Global IP
@@ -56,17 +55,16 @@ module "buckets" {
 # Load Balancer
 module "lb" {
   source                = "terraform-google-modules/lb-http/google//modules/serverless_negs"
-  version               = "~> 10.0"
+  version               = "~> 11.0.0"
   project               = var.project_id
-  name                  = local.load_balancer_name
+  name                  = var.name_prefix
+  address               = var.static_ip_name
   load_balancing_scheme = "EXTERNAL_MANAGED"
   backends              = local.cloud_run_backends
-  url_map               = var.url_map == "" ? null : var.url_map
+  url_map               = google_compute_url_map.urlmap.self_link
+  create_url_map        = false
   certificate_map       = var.certificate_map
-  depends_on = [
-    module.serverless_negs,
-    module.buckets
-  ]
+  create_address        = var.create_address
 }
 
 resource "google_compute_global_forwarding_rule" "https" {
@@ -91,7 +89,7 @@ resource "google_compute_target_https_proxy" "default" {
 # URL Map
 resource "google_compute_url_map" "urlmap" {
   project     = var.project_id
-  name        = "${var.name_prefix}-lb"
+  name        = local.url_map_name
   description = "URL map for Loadbalancer"
   default_url_redirect {
     https_redirect         = true
@@ -129,9 +127,4 @@ resource "google_compute_url_map" "urlmap" {
       }
     }
   }
-  depends_on = [
-    module.buckets,
-    module.serverless_negs,
-    module.lb
-  ]
 }
