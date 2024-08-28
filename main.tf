@@ -60,7 +60,7 @@ module "lb" {
   address               = var.static_ip_name
   load_balancing_scheme = "EXTERNAL_MANAGED"
   backends              = local.cloud_run_backends
-  url_map               = var.url_map != null ? data.google_compute_url_map.default[0].self_link : google_compute_url_map.urlmap[0].self_link
+  url_map               = var.url_map != "" ? data.google_compute_url_map.default[0].self_link : google_compute_url_map.urlmap[0].self_link
   certificate_map       = var.certificate_map
   create_address        = var.create_address
   depends_on = [
@@ -84,7 +84,7 @@ resource "google_compute_global_forwarding_rule" "https" {
 resource "google_compute_target_https_proxy" "default" {
   count           = var.enable_ssl ? 1 : 0
   name            = "${var.name_prefix}-https-proxy"
-  url_map         = var.url_map != null ? data.google_compute_url_map.default[0].self_link : google_compute_url_map.urlmap[0].self_link
+  url_map         = var.url_map != "" ? data.google_compute_url_map.default[0].self_link : google_compute_url_map.urlmap[0].self_link
   certificate_map = "//certificatemanager.googleapis.com/${data.google_certificate_manager_certificate_map.default.id}"
 }
 
@@ -96,7 +96,7 @@ data "google_compute_url_map" "default" {
 }
 
 resource "google_compute_url_map" "urlmap" {
-  count       = var.url_map != "" ? 0 : 1
+  count       = var.url_map == "" ? 1 : 0
   project     = var.project_id
   name        = "${var.name_prefix}-lb"
   description = "URL map for Loadbalancer"
