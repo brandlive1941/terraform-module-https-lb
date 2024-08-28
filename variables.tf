@@ -32,7 +32,7 @@ variable "create_address" {
 variable "url_map" {
   type        = string
   description = "Name of the URL Map"
-  default     = null
+  default     = ""
 }
 
 variable "custom_labels_https_fwd_rule" {

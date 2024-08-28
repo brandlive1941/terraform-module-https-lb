@@ -90,13 +90,13 @@ resource "google_compute_target_https_proxy" "default" {
 
 # URL Map
 data "google_compute_url_map" "default" {
-  count   = var.url_map != null ? 1 : 0
+  count   = var.url_map != "" ? 1 : 0
   name    = var.url_map
   project = var.project_id
 }
 
 resource "google_compute_url_map" "urlmap" {
-  count       = var.url_map != null ? 0 : 1
+  count       = var.url_map != "" ? 0 : 1
   project     = var.project_id
   name        = "${var.name_prefix}-lb"
   description = "URL map for Loadbalancer"
