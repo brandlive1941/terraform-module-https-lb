@@ -23,7 +23,7 @@ variable "name_prefix" {
   description = "Prefix-name used for lb proxy and forwarding rule"
 }
 
-variable create_address {
+variable "create_address" {
   type        = bool
   default     = true
   description = "Set to false to skip the creation of the load balancer"
@@ -32,7 +32,7 @@ variable create_address {
 variable "url_map" {
   type        = string
   description = "Name of the URL Map"
-  default     = ""
+  default     = null
 }
 
 variable "custom_labels_https_fwd_rule" {
