@@ -100,6 +100,7 @@ variable "buckets" {
       }))
     }))
     backend = optional(object({
+      name = optional(string)
       enable_cdn = optional(bool, false)
       cdn_policy = optional(object({
         cache_mode                   = optional(string)
@@ -146,6 +147,7 @@ variable "services" {
       name   = string
     }))
     backend = optional(object({
+      name = optional(string)
       enable_cdn = optional(bool, false)
       iap_config = optional(object({
         enable               = bool
