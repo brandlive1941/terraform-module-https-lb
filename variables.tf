@@ -23,6 +23,12 @@ variable "name_prefix" {
   description = "Prefix-name used for lb proxy and forwarding rule"
 }
 
+variable "create_address" {
+  type        = bool
+  default     = true
+  description = "Set to false to skip the creation of the load balancer"
+}
+
 variable "create_load_balancer" {
   type        = bool
   default     = false
@@ -35,9 +41,9 @@ variable "load_balancer_name" {
   default     = ""
 }
 
-variable "url_map" {
+variable "url_map_name" {
   type        = string
-  description = "Name of the URL Map"
+  description = "Optional name of the URL map to create"
   default     = ""
 }
 
@@ -94,6 +100,7 @@ variable "buckets" {
       }))
     }))
     backend = optional(object({
+      name = optional(string)
       enable_cdn = optional(bool, false)
       cdn_policy = optional(object({
         cache_mode                   = optional(string)
@@ -140,6 +147,7 @@ variable "services" {
       name   = string
     }))
     backend = optional(object({
+      name = optional(string)
       enable_cdn = optional(bool, false)
       iap_config = optional(object({
         enable               = bool

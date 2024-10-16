@@ -1,5 +1,5 @@
 # terraform-module-https-lb
-terraform module for creating an opinionated gcp load balancer
+terraform module for creating an opinionated internal application load balancer
 
 Module Input Variables
 ----------------------
