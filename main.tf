@@ -54,8 +54,7 @@ module "buckets" {
 
 # Load Balancer
 module "lb" {
-  source                = "terraform-google-modules/lb-http/google//modules/serverless_negs"
-  version               = "~> 11.0.0"
+  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=v1.0.1"
   project               = var.project_id
   name                  = var.name_prefix
   address               = var.static_ip_name
