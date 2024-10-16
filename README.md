@@ -32,6 +32,11 @@ module "example-lb" {
 Outputs
 =======
 
+load_balancer_ip_address: IP address of the Cloud Load Balancer
+
+backend_services: backend derived values from inputs
+
+
 Authors
 =======
 
