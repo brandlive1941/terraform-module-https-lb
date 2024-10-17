@@ -30,7 +30,7 @@ module "serverless_negs" {
   for_each           = var.services
   source             = "github.com/brandlive1941/terraform-module-backend-serverless?ref=v1.0.1"
   project_id         = var.project_id
-  name               = each.value.backend["name"]
+  name               = coalesce(each.value.backend["name"], each.key) 
   cloud_run_services = each.value["cloud_run_regions"]
   enable_cdn         = each.value.backend["enable_cdn"]
   iap_config         = each.value.backend["iap_config"]
