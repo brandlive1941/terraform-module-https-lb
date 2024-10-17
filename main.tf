@@ -57,7 +57,7 @@ module "lb" {
   source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=v1.0.1"
   project               = var.project_id
   name                  = var.name_prefix
-  address               = var.static_ip_name
+  address               = data.google_compute_global_address.default.address
   load_balancing_scheme = "EXTERNAL_MANAGED"
   backends              = local.cloud_run_backends
   url_map               = google_compute_url_map.urlmap.self_link
