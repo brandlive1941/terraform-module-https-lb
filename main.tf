@@ -30,7 +30,7 @@ module "serverless_negs" {
   for_each           = var.services
   source             = "github.com/brandlive1941/terraform-module-backend-serverless?ref=v1.0.1"
   project_id         = var.project_id
-  name               = each.key
+  name               = coalesce(each.value.backend["name"], each.key) 
   cloud_run_services = each.value["cloud_run_regions"]
   enable_cdn         = each.value.backend["enable_cdn"]
   iap_config         = each.value.backend["iap_config"]
@@ -57,7 +57,7 @@ module "lb" {
   source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=v1.0.1"
   project               = var.project_id
   name                  = var.name_prefix
-  address               = var.static_ip_name
+  address               = data.google_compute_global_address.default.address
   load_balancing_scheme = "EXTERNAL_MANAGED"
   backends              = local.cloud_run_backends
   url_map               = google_compute_url_map.urlmap.self_link
