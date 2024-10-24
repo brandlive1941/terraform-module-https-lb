@@ -158,6 +158,14 @@ variable "services" {
         enable      = optional(bool)
         sample_rate = optional(number)
       }))
+      default_custom_error_response_policy = optional(object({
+        custom_error_responses = optional(list(object({
+          match_response_code    = optional(string)
+          path                   = optional(string)
+          override_response_code = optional(string)
+        })))
+        error_service = optional(string)
+      }))
     }))
   }))
 }
