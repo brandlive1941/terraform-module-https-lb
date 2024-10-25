@@ -13,8 +13,8 @@ locals {
     }
   }
   default_error_response_rule = var.default_custom_error_response_policy.error_response_rule
-  backend_paths = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
-  url_map_name  = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
+  backend_paths               = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
+  url_map_name                = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
 }
 
 # Global IP
@@ -100,13 +100,13 @@ resource "google_compute_url_map" "urlmap" {
 
   default_custom_error_response_policy {
     error_response_rule {
-        match_response_codes = local.default_error_response_rule["match_response_codes"]
-        path                 = local.default_error_response_rule["path"]
-        override_response_code = local.default_error_response_rule["override_response_code"]
-      }
+      match_response_codes   = local.default_error_response_rule["match_response_codes"]
+      path                   = local.default_error_response_rule["path"]
+      override_response_code = local.default_error_response_rule["override_response_code"]
+    }
     error_service = var.default_custom_error_response_policy["error_service"]
   }
-  
+
   dynamic "host_rule" {
     for_each = merge(var.services, var.buckets)
     content {

@@ -86,7 +86,7 @@ variable "default_custom_error_response_policy" {
   description = "Default custom error response policy"
   type = object({
     error_response_rule = optional(object({
-      match_response_codes    = list(string)
+      match_response_codes   = list(string)
       path                   = string
       override_response_code = number
     }))
