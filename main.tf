@@ -96,7 +96,7 @@ resource "google_compute_url_map" "urlmap" {
     redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
     strip_query            = false
   }
-  efault_custom_error_response_policy = var.default_custom_error_response_policy
+  default_custom_error_response_policy = var.default_custom_error_response_policy
   # default_custom_error_response_policy {
   #   error_response_rule {
   #     match_response_codes = ["504"] # All 5xx responses will be catched
