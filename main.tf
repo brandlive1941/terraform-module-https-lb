@@ -96,14 +96,20 @@ resource "google_compute_url_map" "urlmap" {
     redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
     strip_query            = false
   }
+  
   default_custom_error_response_policy {
-    error_response_rule {
-      match_response_codes = ["404"] # All 5xx responses will be catched
-      path = "/*"
-      override_response_code = 200
-    }
-    error_service = "projects/greenroom-372217/global/backendBuckets/gcs-backend-svc"
+    error_response_rule = var.default_custom_error_response_policy["error_response_rule"]
+    error_service = var.default_custom_error_response_policy["error_service"]
   }
+
+  # default_custom_error_response_policy {
+  #   error_response_rule {
+  #     match_response_codes = ["404"] # All 5xx responses will be catched
+  #     path = "/*"
+  #     override_response_code = 200
+  #   }
+  #   error_service = "projects/greenroom-372217/global/backendBuckets/gcs-backend-svc"
+  # }
   dynamic "host_rule" {
     for_each = merge(var.services, var.buckets)
     content {
