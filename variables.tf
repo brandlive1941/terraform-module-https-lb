@@ -85,11 +85,9 @@ variable "https_redirect" {
 variable "default_custom_error_response_policy" {
   description = "Default custom error response policy"
   type = object({
-    error_respone_rule = optional(object({
-      match_response_code    = list(string)
-      path                   = string
-      override_response_code = number
-    }))
+    match_response_code    = list(string)
+    path                   = string
+    override_response_code = number
     error_service = optional(string)
   })
   default = {}
