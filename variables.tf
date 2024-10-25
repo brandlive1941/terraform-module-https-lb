@@ -82,15 +82,28 @@ variable "https_redirect" {
   type        = bool
 }
 
+# variable "default_custom_error_response_policy" {
+#   description = "Default custom error response policy"
+#   type = object({
+#     match_response_codes    = optional(list(string))
+#     path                   = optional(string)
+#     override_response_code = optional(number)
+#     error_service = optional(string)
+#   })
+#   default = null
+# }
+
 variable "default_custom_error_response_policy" {
   description = "Default custom error response policy"
   type = object({
-    match_response_codes    = optional(list(string))
-    path                   = optional(string)
-    override_response_code = optional(number)
+    error_response_rule = optional(object({
+      match_response_codes    = list(string)
+      path                   = string
+      override_response_code = number
+    }))
     error_service = optional(string)
   })
-  default = null
+  default = {}
 }
 
 variable "buckets" {

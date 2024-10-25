@@ -96,15 +96,20 @@ resource "google_compute_url_map" "urlmap" {
     redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
     strip_query            = false
   }
-  
-  default_custom_error_response_policy {
-    error_response_rule {
-      match_response_codes = var.default_custom_error_response_policy["match_response_codes"]
-      path                 = var.default_custom_error_response_policy["path"]
-      override_response_code = var.default_custom_error_response_policy["override_response_code"]
-    }
+
+    default_custom_error_response_policy {
+    error_response_rule = var.default_custom_error_response_policy["error_response_rule"]
     error_service = var.default_custom_error_response_policy["error_service"]
   }
+  
+  # default_custom_error_response_policy {
+  #   error_response_rule {
+  #     match_response_codes = var.default_custom_error_response_policy["match_response_codes"]
+  #     path                 = var.default_custom_error_response_policy["path"]
+  #     override_response_code = var.default_custom_error_response_policy["override_response_code"]
+  #   }
+  #   error_service = var.default_custom_error_response_policy["error_service"]
+  # }
 
   # default_custom_error_response_policy {
   #   error_response_rule {
