@@ -99,11 +99,7 @@ resource "google_compute_url_map" "urlmap" {
   dynamic default_custom_error_response_policy {
     for_each = var.default_custom_error_response_policy
     content {
-      error_response_rule {
-        match_response_codes    = default_custom_error_response_policy.value.error_response_rule.match_response_codes
-        path                    = default_custom_error_response_policy.value.error_response_rule.path
-        override_response_code  = default_custom_error_response_policy.value.error_response_rule.override_response_code
-      }
+      error_response_rule = default_custom_error_response_policy.value.error_response_rule
       error_service = default_custom_error_response_policy.value.error_service
     }
   }
