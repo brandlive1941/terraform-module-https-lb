@@ -107,23 +107,6 @@ resource "google_compute_url_map" "urlmap" {
     error_service = var.default_custom_error_response_policy["error_service"]
   }
   
-  # default_custom_error_response_policy {
-  #   error_response_rule {
-  #     match_response_codes = var.default_custom_error_response_policy["match_response_codes"]
-  #     path                 = var.default_custom_error_response_policy["path"]
-  #     override_response_code = var.default_custom_error_response_policy["override_response_code"]
-  #   }
-  #   error_service = var.default_custom_error_response_policy["error_service"]
-  # }
-
-  # default_custom_error_response_policy {
-  #   error_response_rule {
-  #     match_response_codes = ["404"] # All 5xx responses will be catched
-  #     path = "/*"
-  #     override_response_code = 200
-  #   }
-  #   error_service = "projects/greenroom-372217/global/backendBuckets/gcs-backend-svc"
-  # }
   dynamic "host_rule" {
     for_each = merge(var.services, var.buckets)
     content {
