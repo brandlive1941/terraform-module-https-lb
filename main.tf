@@ -12,6 +12,7 @@ locals {
       id = module.buckets[bucket].id
     }
   }
+  default_error_response_rule = var.default_custom_error_response_policy.error_response_rule
   backend_paths = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
   url_map_name  = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
 }
@@ -97,8 +98,12 @@ resource "google_compute_url_map" "urlmap" {
     strip_query            = false
   }
 
-    default_custom_error_response_policy {
-    error_response_rule = var.default_custom_error_response_policy["error_response_rule"]
+  default_custom_error_response_policy {
+    error_response_rule = {
+        match_response_codes = local.default_error_response_rule["match_response_codes"]
+        path                 = local.default_error_response_rule["path"]
+        override_response_code = local.default_error_response_rule["override_response_code"]
+      }
     error_service = var.default_custom_error_response_policy["error_service"]
   }
   
