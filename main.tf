@@ -95,6 +95,9 @@ resource "google_compute_url_map" "urlmap" {
     redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
     strip_query            = false
   }
+
+  default_custom_error_response_policy = var.default_custom_error_response_policy
+
   dynamic "host_rule" {
     for_each = merge(var.services, var.buckets)
     content {

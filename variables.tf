@@ -82,6 +82,19 @@ variable "https_redirect" {
   type        = bool
 }
 
+variable "default_custom_error_response_policy" {
+  description = "Default custom error response policy"
+  type = object({
+    error_respone_rule = optional(object({
+      match_response_code    = list(string)
+      path                   = string
+      override_response_code = number
+    }))
+    error_service = optional(string)
+  })
+  default = {}
+}
+
 variable "buckets" {
   description = "Backend Buckets for GCS"
   type = map(object({
@@ -157,14 +170,6 @@ variable "services" {
       log_config = optional(object({
         enable      = optional(bool)
         sample_rate = optional(number)
-      }))
-      default_custom_error_response_policy = optional(object({
-        custom_error_responses = optional(list(object({
-          match_response_code    = optional(string)
-          path                   = optional(string)
-          override_response_code = optional(string)
-        })))
-        error_service = optional(string)
       }))
     }))
   }))
