@@ -87,6 +87,7 @@ resource "google_compute_target_https_proxy" "default" {
 
 # URL Map
 resource "google_compute_url_map" "urlmap" {
+  provider    = google-beta
   project     = var.project_id
   name        = local.url_map_name
   description = "URL map for Loadbalancer"
