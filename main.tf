@@ -7,24 +7,25 @@ locals {
       id = module.lb.backend_services[service].id
     }
   }
+  cloud_run_default_error_response_rules = {
+    for service in keys(var.services) : service => {
+      error_response_rules = module.serverless_negs[service].default_custom_error_response_policy.error_response_rules
+      error_service = module.serverless_negs[service].default_custom_error_response_policy.error_service
+    }
+  }
   bucket_backend_paths = {
     for bucket in keys(var.buckets) : bucket => {
       id = module.buckets[bucket].id
     }
   }
-  cloud_run_default_error_response_rules = {
-    for service in keys(var.services) : service => {
-      default_custom_error_response_policy  = var.services[service].default_custom_error_response_policy
-    }
-  }
   bucket_default_error_response_rules = {
     for bucket in keys(var.buckets) : bucket => {
-      default_custom_error_response_policy  = var.services[service].default_custom_error_response_policy
+      error_response_rules = module.buckets[bucket].default_custom_error_response_policy.error_response_rules
+      error_service = module.buckets[bucket].default_custom_error_response_policy.error_service
     }
   }
-  default_error_response_rule = coalesce(var.default_custom_error_response_policy.error_response_rule, {})
   backend_paths               = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
-  default_error_response_rules = merge(local.cloud_run_default_error_response_rules, local.bucket_default_error_response_rules)
+  default_custom_error_response_rules = merge(local.cloud_run_default_error_response_rules, local.bucket_default_error_response_rules)
   url_map_name                = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
 }
 
@@ -52,7 +53,8 @@ module "serverless_negs" {
 # Backend Bucket Services
 module "buckets" {
   for_each     = var.buckets
-  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.0.4"
+  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=custom_404"
+#  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.0.4"
   project_id   = var.project_id
   name         = each.value["name"]
   location     = each.value["location"]
@@ -66,7 +68,8 @@ module "buckets" {
 
 # Load Balancer
 module "lb" {
-  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=v1.0.1"
+#  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=v1.0.1"
+  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=custom_404"  
   project               = var.project_id
   name                  = var.name_prefix
   address               = data.google_compute_global_address.default.address
@@ -109,14 +112,14 @@ resource "google_compute_url_map" "urlmap" {
     strip_query            = false
   }
 
-  default_custom_error_response_policy {
-    error_response_rule {
-      match_response_codes   = local.default_error_response_rule["match_response_codes"]
-      path                   = local.default_error_response_rule["path"]
-      override_response_code = local.default_error_response_rule["override_response_code"]
-    }
-    error_service = var.default_custom_error_response_policy["error_service"]
-  }
+  # default_custom_error_response_policy {
+  #   error_response_rule {
+  #     match_response_codes   = local.default_error_response_rule["match_response_codes"]
+  #     path                   = local.default_error_response_rule["path"]
+  #     override_response_code = local.default_error_response_rule["override_response_code"]
+  #   }
+  #   error_service = var.default_custom_error_response_policy["error_service"]
+  # }
 
   dynamic "host_rule" {
     for_each = merge(var.services, var.buckets)
@@ -149,15 +152,14 @@ resource "google_compute_url_map" "urlmap" {
       }
       default_custom_error_response_policy {
         dynamic "error_response_rule" {
-          for_each = local.default_error_response_rules[path_matcher.key].default_custom_error_response_policy.error_response_rules
+          for_each = local.default_custom_error_response_rules[path_matcher.key].error_response_rules
           content {
-            match_response_codes   = error_response_rule.value.match_response_codes
-            path                   = error_response_rule.value.path
-            override_response_code = error_response_rule.value.override_response_code
+            match_response_codes   = error_response_rule["match_response_codes"]
+            path                   = error_response_rule["path"]
+            override_response_code = error_response_rule["override_response_code"]
           }
         }
-        error_service = local.default_error_response_rules[path_matcher.key].default_custom_error_response_policy.error_service
+        error_service = local.default_custom_error_response_rules[path_matcher.key].error_service
       }
-    }
   }
 }
