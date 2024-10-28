@@ -9,8 +9,8 @@ locals {
   }
   cloud_run_default_error_response_rules = {
     for service in keys(var.services) : service => {
-      error_response_rules = module.backend_services[service].default_custom_error_response_policy.error_response_rules
-      error_service        = module.backend_services[service].default_custom_error_response_policy.error_service
+      error_response_rules = module.serverless_negs[service].default_custom_error_response_policy.error_response_rules
+      error_service        = module.serverless_negs[service].default_custom_error_response_policy.error_service
     }
   }
   bucket_backend_paths = {
@@ -47,6 +47,7 @@ module "serverless_negs" {
   name               = coalesce(each.value.backend["name"], each.key)
   cloud_run_services = each.value["cloud_run_regions"]
   enable_cdn         = each.value.backend["enable_cdn"]
+  default_custom_error_response_policy = each.value.backend["default_custom_error_response_policy"]
   iap_config         = each.value.backend["iap_config"]
   log_config         = each.value.backend["log_config"]
 }
@@ -62,6 +63,7 @@ module "buckets" {
   service_name = each.value["service_name"]
   enable_cdn   = each.value.backend["enable_cdn"]
   cdn_policy   = each.value.backend["cdn_policy"]
+  default_custom_error_response_policy = each.value.backend["default_custom_error_response_policy"]
   cors_policy  = each.value.backend["cors_policy"]
   iap_config   = each.value.backend["iap_config"]
   log_config   = each.value.backend["log_config"]
