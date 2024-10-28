@@ -10,7 +10,7 @@ locals {
   cloud_run_default_error_response_rules = {
     for service in keys(var.services) : service => {
       error_response_rules = module.serverless_negs[service].default_custom_error_response_policy.error_response_rules
-      error_service = module.serverless_negs[service].default_custom_error_response_policy.error_service
+      error_service        = module.serverless_negs[service].default_custom_error_response_policy.error_service
     }
   }
   bucket_backend_paths = {
@@ -21,12 +21,12 @@ locals {
   bucket_default_error_response_rules = {
     for bucket in keys(var.buckets) : bucket => {
       error_response_rules = module.buckets[bucket].default_custom_error_response_policy.error_response_rules
-      error_service = module.buckets[bucket].default_custom_error_response_policy.error_service
+      error_service        = module.buckets[bucket].default_custom_error_response_policy.error_service
     }
   }
-  backend_paths               = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
+  backend_paths                       = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
   default_custom_error_response_rules = merge(local.cloud_run_default_error_response_rules, local.bucket_default_error_response_rules)
-  url_map_name                = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
+  url_map_name                        = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
 }
 
 # Global IP
@@ -52,9 +52,9 @@ module "serverless_negs" {
 
 # Backend Bucket Services
 module "buckets" {
-  for_each     = var.buckets
-  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=custom_404"
-#  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.0.4"
+  for_each = var.buckets
+  source   = "github.com/brandlive1941/terraform-module-backend-bucket?ref=custom_404"
+  #  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.0.4"
   project_id   = var.project_id
   name         = each.value["name"]
   location     = each.value["location"]
@@ -68,8 +68,8 @@ module "buckets" {
 
 # Load Balancer
 module "lb" {
-#  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=v1.0.1"
-  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=custom_404"  
+  #  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=v1.0.1"
+  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=custom_404"
   project               = var.project_id
   name                  = var.name_prefix
   address               = data.google_compute_global_address.default.address
@@ -161,5 +161,6 @@ resource "google_compute_url_map" "urlmap" {
         }
         error_service = local.default_custom_error_response_rules[path_matcher.key].error_service
       }
+    }
   }
 }
