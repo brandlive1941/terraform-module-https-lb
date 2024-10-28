@@ -9,8 +9,8 @@ locals {
   }
   cloud_run_default_error_response_rules = {
     for service in keys(var.services) : service => {
-      error_response_rules = module.serverless_negs[service].default_custom_error_response_policy.error_response_rules
-      error_service        = module.serverless_negs[service].default_custom_error_response_policy.error_service
+      error_response_rules = module.backend_services[service].default_custom_error_response_policy.error_response_rules
+      error_service        = module.backend_services[service].default_custom_error_response_policy.error_service
     }
   }
   bucket_backend_paths = {
