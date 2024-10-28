@@ -24,9 +24,9 @@ locals {
       error_service          = module.buckets[bucket].default_custom_error_response_policy.error_service
     }
   }
-  backend_paths                  = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
-  default_custom_error_responses = merge(local.cloud_run_default_custom_error_responses, local.bucket_default_custom_error_responses)
-  url_map_name                   = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
+  backend_paths          = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
+  custom_error_responses = merge(local.cloud_run_default_custom_error_responses, local.bucket_default_custom_error_responses)
+  url_map_name           = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
 }
 
 # Global IP
@@ -40,9 +40,8 @@ data "google_certificate_manager_certificate_map" "default" {
 
 # Backend Serverless Network Endpoint Groups
 module "serverless_negs" {
-  for_each = var.services
-  #  source             = "github.com/brandlive1941/terraform-module-backend-serverless?ref=v1.0.1"
-  source                               = "github.com/brandlive1941/terraform-module-backend-serverless?ref=custom_404"
+  for_each                             = var.services
+  source                               = "github.com/brandlive1941/terraform-module-backend-serverless?ref=v1.1.0"
   project_id                           = var.project_id
   name                                 = coalesce(each.value.backend["name"], each.key)
   cloud_run_services                   = each.value["cloud_run_regions"]
@@ -54,9 +53,8 @@ module "serverless_negs" {
 
 # Backend Bucket Services
 module "buckets" {
-  for_each = var.buckets
-  source   = "github.com/brandlive1941/terraform-module-backend-bucket?ref=custom_404"
-  #  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.0.4"
+  for_each                             = var.buckets
+  source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.1.0"
   project_id                           = var.project_id
   name                                 = each.value["name"]
   location                             = each.value["location"]
@@ -114,15 +112,6 @@ resource "google_compute_url_map" "urlmap" {
     strip_query            = false
   }
 
-  # default_custom_error_response_policy {
-  #   error_response_rule {
-  #     match_response_codes   = local.default_error_response_rule["match_response_codes"]
-  #     path                   = local.default_error_response_rule["path"]
-  #     override_response_code = local.default_error_response_rule["override_response_code"]
-  #   }
-  #   error_service = var.default_custom_error_response_policy["error_service"]
-  # }
-
   dynamic "host_rule" {
     for_each = merge(var.services, var.buckets)
     content {
@@ -154,14 +143,14 @@ resource "google_compute_url_map" "urlmap" {
       }
       default_custom_error_response_policy {
         dynamic "error_response_rule" {
-          for_each = coalesce(local.default_custom_error_responses[path_matcher.key].custom_error_responses, [])
+          for_each = coalesce(local.custom_error_responses[path_matcher.key].custom_error_responses, [])
           content {
             match_response_codes   = error_response_rule.value.match_response_codes
             path                   = error_response_rule.value.path
             override_response_code = error_response_rule.value.override_response_code
           }
         }
-        error_service = local.default_custom_error_responses[path_matcher.key].error_service
+        error_service = local.custom_error_responses[path_matcher.key].error_service
       }
     }
   }
