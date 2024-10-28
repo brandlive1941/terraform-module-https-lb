@@ -7,9 +7,9 @@ locals {
       id = module.lb.backend_services[service].id
     }
   }
-  cloud_run_default_error_response_rules = {
+  cloud_run_default_custom_error_responses = {
     for service in keys(var.services) : service => {
-      error_response_rules = module.serverless_negs[service].default_custom_error_response_policy.custom_error_responses
+      custom_error_responses = module.serverless_negs[service].default_custom_error_response_policy.custom_error_responses
       error_service        = module.serverless_negs[service].default_custom_error_response_policy.error_service
     }
   }
@@ -18,14 +18,14 @@ locals {
       id = module.buckets[bucket].id
     }
   }
-  bucket_default_error_response_rules = {
+  bucket_default_custom_error_responses = {
     for bucket in keys(var.buckets) : bucket => {
-      error_response_rules = module.buckets[bucket].default_custom_error_response_policy.custom_error_responses
+      custom_error_responses = module.buckets[bucket].default_custom_error_response_policy.custom_error_responses
       error_service        = module.buckets[bucket].default_custom_error_response_policy.error_service
     }
   }
   backend_paths                       = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
-  default_custom_error_response_rules = merge(local.cloud_run_default_error_response_rules, local.bucket_default_error_response_rules)
+  default_custom_error_responses = merge(local.cloud_run_default_custom_error_responses, local.bucket_default_custom_error_responses)
   url_map_name                        = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
 }
 
@@ -154,14 +154,14 @@ resource "google_compute_url_map" "urlmap" {
       }
       default_custom_error_response_policy {
         dynamic "error_response_rule" {
-          for_each = local.default_custom_error_response_rules[path_matcher.key].error_response_rules
+          for_each = local.default_custom_error_responses[path_matcher.key].custom_error_responses
           content {
             match_response_codes   = error_response_rule["match_response_codes"]
             path                   = error_response_rule["path"]
             override_response_code = error_response_rule["override_response_code"]
           }
         }
-        error_service = local.default_custom_error_response_rules[path_matcher.key].error_service
+        error_service = local.default_custom_error_responses[path_matcher.key].error_service
       }
     }
   }
