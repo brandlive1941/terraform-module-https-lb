@@ -134,7 +134,7 @@ variable "buckets" {
           override_response_code = optional(number)
         })))
         error_service = optional(string)
-      }))
+      }), {})
       cors_policy = optional(set(any))
       iap_config = optional(object({
         enable               = bool
@@ -177,7 +177,7 @@ variable "services" {
           override_response_code = optional(number)
         })))
         error_service = optional(string)
-      }))
+      }), {})
       iap_config = optional(object({
         enable               = bool
         oauth2_client_id     = optional(string)
