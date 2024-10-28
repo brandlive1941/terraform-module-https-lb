@@ -12,8 +12,19 @@ locals {
       id = module.buckets[bucket].id
     }
   }
-  default_error_response_rule = var.default_custom_error_response_policy.error_response_rule
+  cloud_run_default_error_response_rules = {
+    for service in keys(var.services) : service => {
+      default_custom_error_response_policy  = var.services[service].default_custom_error_response_policy
+    }
+  }
+  bucket_default_error_response_rules = {
+    for bucket in keys(var.buckets) : bucket => {
+      default_custom_error_response_policy  = var.services[service].default_custom_error_response_policy
+    }
+  }
+  default_error_response_rule = coalesce(var.default_custom_error_response_policy.error_response_rule, {})
   backend_paths               = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
+  default_error_response_rules = merge(local.cloud_run_default_error_response_rules, local.bucket_default_error_response_rules)
   url_map_name                = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
 }
 
@@ -138,14 +149,14 @@ resource "google_compute_url_map" "urlmap" {
       }
       default_custom_error_response_policy {
         dynamic "error_response_rule" {
-          for_each = path_matcher.value.default_custom_error_response_policy.error_response_rules
+          for_each = local.default_error_response_rules[path_matcher.key].default_custom_error_response_policy.error_response_rules
           content {
             match_response_codes   = error_response_rule.value.match_response_codes
             path                   = error_response_rule.value.path
             override_response_code = error_response_rule.value.override_response_code
           }
         }
-        error_service = path_matcher.value.default_custom_error_response_policy.error_service
+        error_service = local.default_error_response_rules[path_matcher.key].default_custom_error_response_policy.error_service
       }
     }
   }
