@@ -134,17 +134,20 @@ resource "google_compute_url_map" "urlmap" {
               strip_query            = path_rule.value.strip_query
             }
           }
-          dynamic "default_custom_error_response_policy" {
-            for_each = path_matcher.value.default_custom_error_response_policy
+        }
+      }
+      dynamic "default_custom_error_response_policy" {
+        for_each = path_matcher.value.backend["default_custom_error_response_policy"]
+        content {
+          dynamic "error_response_rule" {
+            for_each = default_custom_error_response_policy.value.error_response_rule
             content {
-              error_response_rule {
-                match_response_codes   = default_custom_error_response_policy.value.error_response_rule["match_response_codes"]
-                path                   = default_custom_error_response_policy.value.error_response_rule["path"]
-                override_response_code = default_custom_error_response_policy.value.error_response_rule["override_response_code"]
-              }
-              error_service = default_custom_error_response_policy.value.error_service
+              match_response_codes   = error_response_rule.value.match_response_codes
+              path                   = error_response_rule.value.path
+              override_response_code = error_response_rule.value.override_response_code
             }
           }
+          error_service = default_custom_error_response_policy.value.error_service
         }
       }
     }
