@@ -82,6 +82,19 @@ variable "https_redirect" {
   type        = bool
 }
 
+variable "default_custom_error_response_policy" {
+  description = "Default custom error response policy"
+  type = object({
+    custom_error_responses = optional(object({
+      match_response_codes   = list(string)
+      path                   = string
+      override_response_code = number
+    }))
+    error_service = optional(string)
+  })
+  default = {}
+}
+
 variable "buckets" {
   description = "Backend Buckets for GCS"
   type = map(object({
@@ -114,6 +127,14 @@ variable "buckets" {
           ttl  = optional(number)
         }))
       }))
+      default_custom_error_response_policy = optional(object({
+        custom_error_responses = optional(list(object({
+          match_response_codes   = optional(list(string))
+          path                   = optional(string)
+          override_response_code = optional(number)
+        })))
+        error_service = optional(string)
+      }), {})
       cors_policy = optional(set(any))
       iap_config = optional(object({
         enable               = bool
@@ -149,6 +170,14 @@ variable "services" {
     backend = optional(object({
       name       = optional(string)
       enable_cdn = optional(bool, false)
+      default_custom_error_response_policy = optional(object({
+        custom_error_responses = optional(list(object({
+          match_response_codes   = optional(list(string))
+          path                   = optional(string)
+          override_response_code = optional(number)
+        })))
+        error_service = optional(string)
+      }), {})
       iap_config = optional(object({
         enable               = bool
         oauth2_client_id     = optional(string)

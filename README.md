@@ -36,6 +36,10 @@ load_balancer_ip_address: IP address of the Cloud Load Balancer
 
 backend_services: backend derived values from inputs
 
+Details
+=======
+Because Terrraform does not allow you to reference and object inside of an object I utilized submodules to make sub-object elements available downstream. If more configuration variables are added to the primary object data it's likely they will be need to be passed into the backend modules, then made available as outputs to be used elsewhere.
+
 
 Authors
 =======

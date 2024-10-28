@@ -7,13 +7,26 @@ locals {
       id = module.lb.backend_services[service].id
     }
   }
+  cloud_run_default_custom_error_responses = {
+    for service in keys(var.services) : service => {
+      custom_error_responses = module.serverless_negs[service].default_custom_error_response_policy.custom_error_responses
+      error_service          = module.serverless_negs[service].default_custom_error_response_policy.error_service
+    }
+  }
   bucket_backend_paths = {
     for bucket in keys(var.buckets) : bucket => {
       id = module.buckets[bucket].id
     }
   }
-  backend_paths = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
-  url_map_name  = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
+  bucket_default_custom_error_responses = {
+    for bucket in keys(var.buckets) : bucket => {
+      custom_error_responses = module.buckets[bucket].default_custom_error_response_policy.custom_error_responses
+      error_service          = module.buckets[bucket].default_custom_error_response_policy.error_service
+    }
+  }
+  backend_paths          = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
+  custom_error_responses = merge(local.cloud_run_default_custom_error_responses, local.bucket_default_custom_error_responses)
+  url_map_name           = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
 }
 
 # Global IP
@@ -27,29 +40,31 @@ data "google_certificate_manager_certificate_map" "default" {
 
 # Backend Serverless Network Endpoint Groups
 module "serverless_negs" {
-  for_each           = var.services
-  source             = "github.com/brandlive1941/terraform-module-backend-serverless?ref=v1.0.1"
-  project_id         = var.project_id
-  name               = coalesce(each.value.backend["name"], each.key) 
-  cloud_run_services = each.value["cloud_run_regions"]
-  enable_cdn         = each.value.backend["enable_cdn"]
-  iap_config         = each.value.backend["iap_config"]
-  log_config         = each.value.backend["log_config"]
+  for_each                             = var.services
+  source                               = "github.com/brandlive1941/terraform-module-backend-serverless?ref=v1.1.0"
+  project_id                           = var.project_id
+  name                                 = coalesce(each.value.backend["name"], each.key)
+  cloud_run_services                   = each.value["cloud_run_regions"]
+  enable_cdn                           = each.value.backend["enable_cdn"]
+  default_custom_error_response_policy = each.value.backend["default_custom_error_response_policy"]
+  iap_config                           = each.value.backend["iap_config"]
+  log_config                           = each.value.backend["log_config"]
 }
 
 # Backend Bucket Services
 module "buckets" {
-  for_each     = var.buckets
-  source       = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.0.4"
-  project_id   = var.project_id
-  name         = each.value["name"]
-  location     = each.value["location"]
-  service_name = each.value["service_name"]
-  enable_cdn   = each.value.backend["enable_cdn"]
-  cdn_policy   = each.value.backend["cdn_policy"]
-  cors_policy  = each.value.backend["cors_policy"]
-  iap_config   = each.value.backend["iap_config"]
-  log_config   = each.value.backend["log_config"]
+  for_each                             = var.buckets
+  source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.1.0"
+  project_id                           = var.project_id
+  name                                 = each.value["name"]
+  location                             = each.value["location"]
+  service_name                         = each.value["service_name"]
+  enable_cdn                           = each.value.backend["enable_cdn"]
+  cdn_policy                           = each.value.backend["cdn_policy"]
+  default_custom_error_response_policy = each.value.backend["default_custom_error_response_policy"]
+  cors_policy                          = each.value.backend["cors_policy"]
+  iap_config                           = each.value.backend["iap_config"]
+  log_config                           = each.value.backend["log_config"]
 }
 
 # Load Balancer
@@ -87,6 +102,7 @@ resource "google_compute_target_https_proxy" "default" {
 
 # URL Map
 resource "google_compute_url_map" "urlmap" {
+  provider    = google-beta
   project     = var.project_id
   name        = local.url_map_name
   description = "URL map for Loadbalancer"
@@ -95,6 +111,7 @@ resource "google_compute_url_map" "urlmap" {
     redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
     strip_query            = false
   }
+
   dynamic "host_rule" {
     for_each = merge(var.services, var.buckets)
     content {
@@ -123,6 +140,17 @@ resource "google_compute_url_map" "urlmap" {
             }
           }
         }
+      }
+      default_custom_error_response_policy {
+        dynamic "error_response_rule" {
+          for_each = coalesce(local.custom_error_responses[path_matcher.key].custom_error_responses, [])
+          content {
+            match_response_codes   = error_response_rule.value.match_response_codes
+            path                   = error_response_rule.value.path
+            override_response_code = error_response_rule.value.override_response_code
+          }
+        }
+        error_service = local.custom_error_responses[path_matcher.key].error_service
       }
     }
   }
