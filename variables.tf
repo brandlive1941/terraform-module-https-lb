@@ -128,11 +128,11 @@ variable "buckets" {
         }))
       }))
       default_custom_error_response_policy = optional(object({
-        error_response_rule = optional(list[object({
+        error_response_rule = optional(list(object({
           match_response_codes   = list(string)
           path                   = string
           override_response_code = number
-        })])
+        })))
         error_service = optional(string)
       }))
       cors_policy = optional(set(any))
@@ -171,11 +171,11 @@ variable "services" {
       name       = optional(string)
       enable_cdn = optional(bool, false)
       default_custom_error_response_policy = optional(object({
-        error_response_rule = optional(list[object({
+        error_response_rule = optional(list(object({
           match_response_codes   = list(string)
           path                   = string
           override_response_code = number
-        })])
+        })))
         error_service = optional(string)
       }))
       iap_config = optional(object({
