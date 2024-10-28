@@ -85,7 +85,7 @@ variable "https_redirect" {
 variable "default_custom_error_response_policy" {
   description = "Default custom error response policy"
   type = object({
-    error_response_rule = optional(object({
+    custom_error_responses = optional(object({
       match_response_codes   = list(string)
       path                   = string
       override_response_code = number
@@ -128,7 +128,7 @@ variable "buckets" {
         }))
       }))
       default_custom_error_response_policy = optional(object({
-        error_response_rules = optional(list(object({
+        custom_error_responses = optional(list(object({
           match_response_codes   = optional(list(string))
           path                   = optional(string)
           override_response_code = optional(number)
@@ -171,7 +171,7 @@ variable "services" {
       name       = optional(string)
       enable_cdn = optional(bool, false)
       default_custom_error_response_policy = optional(object({
-        error_response_rules = optional(list(object({
+        custom_error_responses = optional(list(object({
           match_response_codes   = optional(list(string))
           path                   = optional(string)
           override_response_code = optional(number)

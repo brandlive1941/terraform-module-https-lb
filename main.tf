@@ -9,7 +9,7 @@ locals {
   }
   cloud_run_default_error_response_rules = {
     for service in keys(var.services) : service => {
-      error_response_rules = module.serverless_negs[service].default_custom_error_response_policy.error_response_rules
+      error_response_rules = module.serverless_negs[service].default_custom_error_response_policy.custom_error_responses
       error_service        = module.serverless_negs[service].default_custom_error_response_policy.error_service
     }
   }
@@ -20,7 +20,7 @@ locals {
   }
   bucket_default_error_response_rules = {
     for bucket in keys(var.buckets) : bucket => {
-      error_response_rules = module.buckets[bucket].default_custom_error_response_policy.error_response_rules
+      error_response_rules = module.buckets[bucket].default_custom_error_response_policy.custom_error_responses
       error_service        = module.buckets[bucket].default_custom_error_response_policy.error_service
     }
   }
