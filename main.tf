@@ -41,7 +41,8 @@ data "google_certificate_manager_certificate_map" "default" {
 # Backend Serverless Network Endpoint Groups
 module "serverless_negs" {
   for_each           = var.services
-  source             = "github.com/brandlive1941/terraform-module-backend-serverless?ref=v1.0.1"
+#  source             = "github.com/brandlive1941/terraform-module-backend-serverless?ref=v1.0.1"
+  source             = "github.com/brandlive1941/terraform-module-backend-serverless?ref=custom_404"
   project_id         = var.project_id
   name               = coalesce(each.value.backend["name"], each.key)
   cloud_run_services = each.value["cloud_run_regions"]
@@ -68,8 +69,7 @@ module "buckets" {
 
 # Load Balancer
 module "lb" {
-  #  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=v1.0.1"
-  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=custom_404"
+  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=v1.0.1"
   project               = var.project_id
   name                  = var.name_prefix
   address               = data.google_compute_global_address.default.address
