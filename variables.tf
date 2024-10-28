@@ -127,6 +127,14 @@ variable "buckets" {
           ttl  = optional(number)
         }))
       }))
+      default_custom_error_response_policy = object({
+        error_response_rule = optional(object({
+          match_response_codes   = list(string)
+          path                   = string
+          override_response_code = number
+        }))
+        error_service = optional(string)
+      })
       cors_policy = optional(set(any))
       iap_config = optional(object({
         enable               = bool
@@ -162,6 +170,14 @@ variable "services" {
     backend = optional(object({
       name       = optional(string)
       enable_cdn = optional(bool, false)
+      default_custom_error_response_policy = object({
+        error_response_rule = optional(object({
+          match_response_codes   = list(string)
+          path                   = string
+          override_response_code = number
+        }))
+        error_service = optional(string)
+      })
       iap_config = optional(object({
         enable               = bool
         oauth2_client_id     = optional(string)
