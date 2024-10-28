@@ -128,10 +128,10 @@ variable "buckets" {
         }))
       }))
       default_custom_error_response_policy = optional(object({
-        error_response_rule = optional(list(object({
-          match_response_codes   = list(string)
-          path                   = string
-          override_response_code = number
+        error_response_rules = optional(list(object({
+          match_response_codes   = optional(list(string))
+          path                   = optional(string)
+          override_response_code = optional(number)
         })))
         error_service = optional(string)
       }))
@@ -171,10 +171,10 @@ variable "services" {
       name       = optional(string)
       enable_cdn = optional(bool, false)
       default_custom_error_response_policy = optional(object({
-        error_response_rule = optional(list(object({
-          match_response_codes   = list(string)
-          path                   = string
-          override_response_code = number
+        error_response_rules = optional(list(object({
+          match_response_codes   = optional(list(string))
+          path                   = optional(string)
+          override_response_code = optional(number)
         })))
         error_service = optional(string)
       }))
