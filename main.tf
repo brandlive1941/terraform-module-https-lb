@@ -155,5 +155,5 @@ resource "google_compute_url_map" "urlmap" {
       }
     }
   }
-  depends_on = [ module.buckets, module.lb.backend_services ]
+  depends_on = [module.buckets, module.lb.backend_services]
 }
