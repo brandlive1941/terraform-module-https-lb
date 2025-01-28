@@ -130,11 +130,7 @@ variable "buckets" {
         })))
         error_service = optional(string)
       }), {})
-      custom_error_responses = optional(object({
-        match_response_codes   = list(string)
-        path                   = string
-        override_response_code = number
-      }))
+      custom_response_headers = optional(list(string))
       cors_policy = optional(set(any))
       iap_config = optional(object({
         enable               = bool
