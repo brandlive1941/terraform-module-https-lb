@@ -62,6 +62,7 @@ module "buckets" {
   enable_cdn                           = each.value.backend["enable_cdn"]
   cdn_policy                           = each.value.backend["cdn_policy"]
   default_custom_error_response_policy = each.value.backend["default_custom_error_response_policy"]
+  custom_response_headers              = each.value.backend["custom_response_headers"]
   cors_policy                          = each.value.backend["cors_policy"]
   iap_config                           = each.value.backend["iap_config"]
   log_config                           = each.value.backend["log_config"]
