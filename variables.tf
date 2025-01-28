@@ -8,11 +8,6 @@ variable "region" {
   description = "GCP region where the loadbalancer will be created"
 }
 
-variable "environment" {
-  type        = string
-  description = "The application environment"
-}
-
 variable "static_ip_name" {
   type        = string
   description = "Name of the external-ip. the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])?"

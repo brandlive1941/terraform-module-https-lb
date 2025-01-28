@@ -57,7 +57,6 @@ module "buckets" {
   source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=bdev-437"
   project_id                           = var.project_id
   name                                 = each.value["name"]
-  environment                          = each.value["environment"]
   location                             = each.value["location"]
   service_name                         = each.value["service_name"]
   enable_cdn                           = each.value.backend["enable_cdn"]
