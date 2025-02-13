@@ -96,7 +96,7 @@ resource "google_compute_global_forwarding_rule" "https" {
 
 # SSL Policy for the load balancer #
 resource "google_compute_ssl_policy" "tls12-ssl-policy" {
-  name            = "${var.environment}-tls12-ssl-policy"
+  name            = "${var.project_id}-tls12-ssl-policy"
   profile         = "MODERN"  # Use MODERN for strong security settings.
   min_tls_version = "TLS_1_2" # Only allow TLS 1.2 and above.
 
