@@ -94,10 +94,20 @@ resource "google_compute_global_forwarding_rule" "https" {
   labels                = var.custom_labels_https_fwd_rule
 }
 
+# SSL Policy for the load balancer #
+resource "google_compute_ssl_policy" "tls12-ssl-policy" {
+  name            = "${var.project_id}-tls12-ssl-policy"
+  profile         = "MODERN"  # Use MODERN for strong security settings.
+  min_tls_version = "TLS_1_2" # Only allow TLS 1.2 and above.
+
+  description = "SSL policy to enforce TLS 1.2 and disable TLS 1.0 and 1.1"
+}
+
 resource "google_compute_target_https_proxy" "default" {
   count           = var.enable_ssl ? 1 : 0
   name            = "${var.name_prefix}-https-proxy"
   url_map         = google_compute_url_map.urlmap.self_link
+  ssl_policy      = google_compute_ssl_policy.tls12-ssl-policy.self_link
   certificate_map = "//certificatemanager.googleapis.com/${data.google_certificate_manager_certificate_map.default.id}"
 }
 
