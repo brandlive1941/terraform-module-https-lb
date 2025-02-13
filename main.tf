@@ -94,7 +94,7 @@ resource "google_compute_global_forwarding_rule" "https" {
   labels                = var.custom_labels_https_fwd_rule
 }
 
-# SSL Policy for the load balancer #
+# SSL Policy for the load balancer
 resource "google_compute_ssl_policy" "tls12-ssl-policy" {
   name            = "${var.project_id}-tls12-ssl-policy"
   profile         = "MODERN"  # Use MODERN for strong security settings.
