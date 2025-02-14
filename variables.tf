@@ -129,7 +129,7 @@ variable "buckets" {
           override_response_code = optional(number)
         })))
         error_service = optional(string)
-      }), {})
+      }))
       custom_response_headers = optional(list(string))
       cors_policy             = optional(set(any))
       iap_config = optional(object({
