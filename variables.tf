@@ -87,7 +87,7 @@ variable "default_custom_error_response_policy" {
     }))
     error_service = optional(string)
   })
-  default = {}
+  default = null
 }
 
 variable "buckets" {
