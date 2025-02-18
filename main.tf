@@ -154,10 +154,10 @@ resource "google_compute_url_map" "urlmap" {
         }
       }
       dynamic "default_custom_error_response_policy" {
-        for_each = local.default_custom_error_responses[path_matcher.key]
+        for_each = local.default_custom_error_responses[path_matcher.key] != null ? [local.default_custom_error_responses[path_matcher.key]] : []
         content {
           dynamic "error_response_rule" {
-            for_each = { for response_policy in default_custom_error_response_policy : error_response.match_response_codes => error_response if error_response != null }
+            for_each = default_custom_error_response_policy.value.custom_error_responses
             content {
               match_response_codes   = error_response_rule.value.match_response_codes
               path                   = error_response_rule.value.path
