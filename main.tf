@@ -130,6 +130,7 @@ resource "google_compute_url_map" "urlmap" {
       path_matcher = host_rule.key
     }
   }
+
   dynamic "path_matcher" {
     for_each = merge(var.services, var.buckets)
     content {
@@ -153,7 +154,7 @@ resource "google_compute_url_map" "urlmap" {
         }
       }
       dynamic "default_custom_error_response_policy" {
-        for_each = local.default_custom_error_responses
+        for_each = local.default_custom_error_responses[path_matcher.key]
         content {
           dynamic "error_response_rule" {
             for_each = { for response_policy in default_custom_error_response_policy : error_response.match_response_codes => error_response if error_response != null }
