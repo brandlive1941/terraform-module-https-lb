@@ -153,7 +153,7 @@ resource "google_compute_url_map" "urlmap" {
         }
       }
       dynamic "default_custom_error_response_policy" {
-        for_each = coalesce(local.default_custom_error_responses, [])
+        for_each = local.default_custom_error_responses
         content {
           dynamic "error_response_rule" {
             for_each = default_custom_error_response_policy.value.custom_error_responses
