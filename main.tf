@@ -156,7 +156,7 @@ resource "google_compute_url_map" "urlmap" {
         for_each = local.default_custom_error_responses
         content {
           dynamic "error_response_rule" {
-            for_each = default_custom_error_response_policy.value.custom_error_responses
+            for_each = { for response_policy in default_custom_error_response_policy : error_response.match_response_codes => error_response if error_response != null }
             content {
               match_response_codes   = error_response_rule.value.match_response_codes
               path                   = error_response_rule.value.path
