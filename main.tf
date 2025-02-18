@@ -10,7 +10,7 @@ locals {
   cloud_run_default_custom_error_responses = {
     for service in keys(var.services) : service => {
       custom_error_responses = module.serverless_negs[service].default_custom_error_response_policy.custom_error_responses ? module.serverless_negs[service].default_custom_error_response_policy.custom_error_responses : []
-      error_service         = module.serverless_negs[service].default_custom_error_response_policy.error_service ? module.serverless_negs[service].default_custom_error_response_policy.error_service : null
+      error_service          = module.serverless_negs[service].default_custom_error_response_policy.error_service ? module.serverless_negs[service].default_custom_error_response_policy.error_service : null
     }
   }
   bucket_backend_paths = {
@@ -53,18 +53,18 @@ module "serverless_negs" {
 
 # Backend Bucket Services
 module "buckets" {
-  for_each                             = var.buckets
-  source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.2.0"
-  project_id                           = var.project_id
-  name                                 = each.value["name"]
-  location                             = each.value["location"]
-  service_name                         = each.value["service_name"]
-  enable_cdn                           = each.value.backend["enable_cdn"]
-  cdn_policy                           = each.value.backend["cdn_policy"]
-  custom_response_headers              = each.value.backend["custom_response_headers"]
-  cors_policy                          = each.value.backend["cors_policy"]
-  iap_config                           = each.value.backend["iap_config"]
-  log_config                           = each.value.backend["log_config"]
+  for_each                = var.buckets
+  source                  = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.2.0"
+  project_id              = var.project_id
+  name                    = each.value["name"]
+  location                = each.value["location"]
+  service_name            = each.value["service_name"]
+  enable_cdn              = each.value.backend["enable_cdn"]
+  cdn_policy              = each.value.backend["cdn_policy"]
+  custom_response_headers = each.value.backend["custom_response_headers"]
+  cors_policy             = each.value.backend["cors_policy"]
+  iap_config              = each.value.backend["iap_config"]
+  log_config              = each.value.backend["log_config"]
 }
 
 # Load Balancer
@@ -156,7 +156,7 @@ resource "google_compute_url_map" "urlmap" {
         content {
           dynamic "error_response_rule" {
             for_each = default_custom_error_response_policy.value.custom_error_responses
-            content{
+            content {
               match_response_codes   = error_response_rule.value.match_response_codes
               path                   = error_response_rule.value.path
               override_response_code = error_response_rule.value.override_response_code
