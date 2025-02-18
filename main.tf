@@ -154,12 +154,12 @@ resource "google_compute_url_map" "urlmap" {
       dynamic "default_custom_error_response_policy" {
         for_each = coalesce(local.custom_error_responses[path_matcher.key].custom_error_responses, [])
         content {
-          dynamic "error_response_rules" {
-            for_each = default_custom_error_response_policy.value.error_response_rules
+          dynamic "error_response_rule" {
+            for_each = default_custom_error_response_policy.value.custom_error_responses
             content{
-              match_response_codes   = error_response_rules.value.match_response_codes
-              path                   = error_response_rules.value.path
-              override_response_code = error_response_rules.value.override_response_code
+              match_response_codes   = error_response_rule.value.match_response_codes
+              path                   = error_response_rule.value.path
+              override_response_code = error_response_rule.value.override_response_code
             }
           }
           error_service = default_custom_error_response_policy.value.error_service
