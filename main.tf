@@ -24,9 +24,9 @@ locals {
       error_service          = module.buckets[bucket].default_custom_error_response_policy.error_service
     }
   }
-  backend_paths          = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
+  backend_paths                  = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
   default_custom_error_responses = merge(local.cloud_run_default_custom_error_responses, local.bucket_default_custom_error_responses)
-  url_map_name           = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
+  url_map_name                   = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
 }
 
 # Global IP
@@ -53,19 +53,19 @@ module "serverless_negs" {
 
 # Backend Bucket Services
 module "buckets" {
-  for_each                = var.buckets
-  source                  = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.2.0"
-  project_id              = var.project_id
-  name                    = each.value["name"]
-  location                = each.value["location"]
-  service_name            = each.value["service_name"]
-  enable_cdn              = each.value.backend["enable_cdn"]
-  cdn_policy              = each.value.backend["cdn_policy"]
+  for_each                             = var.buckets
+  source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.2.0"
+  project_id                           = var.project_id
+  name                                 = each.value["name"]
+  location                             = each.value["location"]
+  service_name                         = each.value["service_name"]
+  enable_cdn                           = each.value.backend["enable_cdn"]
+  cdn_policy                           = each.value.backend["cdn_policy"]
   default_custom_error_response_policy = each.value.backend["default_custom_error_response_policy"]
-  custom_response_headers = each.value.backend["custom_response_headers"]
-  cors_policy             = each.value.backend["cors_policy"]
-  iap_config              = each.value.backend["iap_config"]
-  log_config              = each.value.backend["log_config"]
+  custom_response_headers              = each.value.backend["custom_response_headers"]
+  cors_policy                          = each.value.backend["cors_policy"]
+  iap_config                           = each.value.backend["iap_config"]
+  log_config                           = each.value.backend["log_config"]
 }
 
 # Load Balancer
