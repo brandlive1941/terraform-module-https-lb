@@ -159,7 +159,7 @@ resource "google_compute_url_map" "urlmap" {
             path                   = default_custom_error_response_policy.value.path
             override_response_code = default_custom_error_response_policy.value.override_response_code
         }
-        error_service = local.custom_error_responses[path_matcher.key].error_service
+        error_service = default_custom_error_response_policy.value.error_service
       }
     }
   }
