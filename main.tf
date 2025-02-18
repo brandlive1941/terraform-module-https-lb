@@ -25,7 +25,7 @@ locals {
     }
   }
   backend_paths          = merge(local.cloud_run_backend_paths, local.bucket_backend_paths)
-  custom_error_responses = merge(local.cloud_run_default_custom_error_responses, local.bucket_default_custom_error_responses)
+  default_custom_error_responses = merge(local.cloud_run_default_custom_error_responses, local.bucket_default_custom_error_responses)
   url_map_name           = var.url_map_name == "" ? "${var.name_prefix}-lb" : var.url_map_name
 }
 
@@ -153,7 +153,7 @@ resource "google_compute_url_map" "urlmap" {
         }
       }
       dynamic "default_custom_error_response_policy" {
-        for_each = coalesce(local.custom_error_responses[path_matcher.key].custom_error_responses, [])
+        for_each = coalesce(local.default_custom_error_responses, [])
         content {
           dynamic "error_response_rule" {
             for_each = default_custom_error_response_policy.value.custom_error_responses
