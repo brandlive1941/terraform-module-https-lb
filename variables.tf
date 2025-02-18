@@ -87,7 +87,7 @@ variable "default_custom_error_response_policy" {
     }))
     error_service = optional(string)
   })
-  default = {}
+  default = null
 }
 
 variable "buckets" {
@@ -173,7 +173,7 @@ variable "services" {
           override_response_code = optional(number)
         })))
         error_service = optional(string)
-      }), {})
+      }))
       iap_config = optional(object({
         enable               = bool
         oauth2_client_id     = optional(string)
