@@ -54,8 +54,8 @@ module "serverless_negs" {
 # Backend Bucket Services
 module "buckets" {
   for_each                             = var.buckets
-  #source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.2.0"
-  source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=bdev-437-fix"
+  source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.2.0"
+  #source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=bdev-437-fix"
   project_id                           = var.project_id
   name                                 = each.value["name"]
   location                             = each.value["location"]
@@ -152,16 +152,12 @@ resource "google_compute_url_map" "urlmap" {
           }
         }
       }
-      default_custom_error_response_policy {
-        dynamic "error_response_rule" {
-          for_each = coalesce(local.custom_error_responses[path_matcher.key].custom_error_responses, [])
-          content {
-            match_response_codes   = error_response_rule.value.match_response_codes
-            path                   = error_response_rule.value.path
-            override_response_code = error_response_rule.value.override_response_code
-          }
+      dynamic "default_custom_error_response_policy" {
+        for_each = coalesce(local.custom_error_responses[path_matcher.key].custom_error_responses, [])
+        content {
+          custom_error_responses = default_custom_error_response_policy.value.custom_error_responses
+          error_service          = default_custom_error_response_policy.value.error_service
         }
-        error_service = local.custom_error_responses[path_matcher.key].error_service
       }
     }
   }
