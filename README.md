@@ -4,11 +4,20 @@ terraform module for creating an opinionated internal application load balancer
 Module Input Variables
 ----------------------
 
-- `project` - gcp project id
+- `project_id` - gcp project id
 - `region` - gcp region
-- `environment` - logical environment
 - `static_ip_name` - global load balancer name
+- `name_prefix` - prefix-name used for lb proxy and forwarding rule
+- `create_address` - toggle external static IP creation
+- `create_load_balancer` - toggle load balaner creation
+- `url_map_name` - toggle url map name
+- `custom_labels_https_fwd_rule` - map of custom labels to apply to the resources
+- `ssl_cert_name` - creates a unique name beginning with the specified prefix
 - `certificate_map` - certificate map to attach to load balancer
+- `port_range` - HTTPS Port number
+- `enable_ssl` - enable SSL support
+- `https_redirect` - enable HTTPS redirect
+- `default_custom_error_response_policy` - Default custom error response policy
 - `services` - map cloud run service metadata
 - `buckets` - map of gcs bucket metadata
 
