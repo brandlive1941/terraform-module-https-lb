@@ -49,6 +49,18 @@ Details
 =======
 Because Terrraform does not allow you to reference and object inside of an object I utilized submodules to make sub-object elements available downstream. If more configuration variables are added to the primary object data it's likely they will be need to be passed into the backend modules, then made available as outputs to be used elsewhere.
 
+Contributing
+=======
+This project uses [Commitizen](https://commitizen-tools.github.io/commitizen/).
+
+Use the following command to stage a release after adding files with `git commit`
+  ```bash
+  git cz
+  ```
+This will guide you through a series of prompts to format your commit message correctly.
+
+This only needs to be done once per PR
+
 
 Authors
 =======
