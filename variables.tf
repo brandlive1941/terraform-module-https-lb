@@ -164,8 +164,9 @@ variable "services" {
       name   = string
     }))
     backend = optional(object({
-      name       = optional(string)
-      enable_cdn = optional(bool, false)
+      name          = optional(string)
+      enable_public = optional(bool, true)
+      enable_cdn    = optional(bool, false)
       default_custom_error_response_policy = optional(object({
         custom_error_responses = optional(list(object({
           match_response_codes   = optional(list(string))
