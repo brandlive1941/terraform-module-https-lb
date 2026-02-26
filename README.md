@@ -20,6 +20,13 @@ Module Input Variables
 - `default_custom_error_response_policy` - Default custom error response policy
 - `services` - map cloud run service metadata
 - `buckets` - map of gcs bucket metadata
+  - `name` - GCS bucket name
+  - `location` - bucket location
+  - `service_name` - backend bucket service name
+  - `website` - (optional, default `false`) enable GCS static website hosting; sets `main_page_suffix = index.html` and `not_found_page = index.html` so the load balancer serves `index.html` instead of returning an XML bucket listing
+  - `hosts` - list of hostnames to route to this bucket
+  - `path_rules` - map of path rules for URL routing
+  - `backend` - backend configuration (CDN, IAP, logging, CORS, custom response headers)
 
 Usage
 -----
