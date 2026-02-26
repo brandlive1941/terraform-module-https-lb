@@ -96,6 +96,7 @@ variable "buckets" {
     name         = string
     location     = string
     service_name = string
+    website      = optional(bool, false)
     hosts        = list(string)
     path_rules = map(object({
       paths = list(string)
