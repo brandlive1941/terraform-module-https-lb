@@ -60,6 +60,7 @@ module "buckets" {
   name                                 = each.value["name"]
   location                             = each.value["location"]
   service_name                         = each.value["service_name"]
+  website                              = each.value["website"]
   enable_cdn                           = each.value.backend["enable_cdn"]
   cdn_policy                           = each.value.backend["cdn_policy"]
   default_custom_error_response_policy = each.value.backend["default_custom_error_response_policy"]
