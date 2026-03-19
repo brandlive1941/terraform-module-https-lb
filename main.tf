@@ -55,7 +55,8 @@ module "serverless_negs" {
 # Backend Bucket Services
 module "buckets" {
   for_each                             = var.buckets
-  source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.2.0"
+  #source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.2.0"
+  source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=OP-723"
   project_id                           = var.project_id
   name                                 = each.value["name"]
   location                             = each.value["location"]
