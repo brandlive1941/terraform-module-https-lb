@@ -1,9 +1,4 @@
 locals {
-  module_versions = {
-    backend_bucket      = "v1.3.0",
-    backend_serverless  = "v1.2.0",
-    gcp_serverless_negs = "v1.0.1"
-  }
   cloud_run_backends = {
     for service in keys(var.services) : service => module.serverless_negs[service].backend
   }
@@ -46,7 +41,7 @@ data "google_certificate_manager_certificate_map" "default" {
 # Backend Serverless Network Endpoint Groups
 module "serverless_negs" {
   for_each                             = var.services
-  source                               = "github.com/brandlive1941/terraform-module-backend-serverless?ref=${local.module_versions.backend_serverless}"
+  source                               = "github.com/brandlive1941/terraform-module-backend-serverless?ref=v1.2.0"
   project_id                           = var.project_id
   name                                 = coalesce(each.value.backend["name"], each.key)
   cloud_run_services                   = each.value["cloud_run_regions"]
@@ -60,7 +55,7 @@ module "serverless_negs" {
 # Backend Bucket Services
 module "buckets" {
   for_each                             = var.buckets
-  source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=${local.module_versions.backend_bucket}"
+  source                               = "github.com/brandlive1941/terraform-module-backend-bucket?ref=v1.3.0"
   project_id                           = var.project_id
   name                                 = each.value["name"]
   location                             = each.value["location"]
@@ -77,7 +72,7 @@ module "buckets" {
 
 # Load Balancer
 module "lb" {
-  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=${local.module_versions.gcp_serverless_negs}"
+  source                = "github.com/brandlive1941/terraform-module-gcp-serverless-negs?ref=v1.0.1"
   project               = var.project_id
   name                  = var.name_prefix
   address               = data.google_compute_global_address.default.address
