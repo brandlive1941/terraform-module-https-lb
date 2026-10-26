@@ -185,6 +185,7 @@ variable "services" {
         enable      = optional(bool)
         sample_rate = optional(number)
       }))
+      security_policy = optional(string)
     }))
   }))
 }

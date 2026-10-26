@@ -41,7 +41,7 @@ data "google_certificate_manager_certificate_map" "default" {
 # Backend Serverless Network Endpoint Groups
 module "serverless_negs" {
   for_each                             = var.services
-  source                               = "github.com/brandlive1941/terraform-module-backend-serverless?ref=v1.2.0"
+  source                               = "github.com/brandlive1941/terraform-module-backend-serverless?ref=v1.3.0"
   project_id                           = var.project_id
   name                                 = coalesce(each.value.backend["name"], each.key)
   cloud_run_services                   = each.value["cloud_run_regions"]
@@ -50,6 +50,7 @@ module "serverless_negs" {
   default_custom_error_response_policy = each.value.backend["default_custom_error_response_policy"]
   iap_config                           = each.value.backend["iap_config"]
   log_config                           = each.value.backend["log_config"]
+  security_policy                      = each.value.backend["security_policy"]
 }
 
 # Backend Bucket Services
